@@ -1,0 +1,66 @@
+/*
+p {
+  font-family: sans-serif;
+  color: red;
+}
+
+li {
+  background-color: greenyellow;
+  border: 1px solid black;
+  margin-bottom: 5px;
+}
+
+ul {
+    background-color: blueviolet;
+    border: 3px dashed blue;
+}
+*/
+html {
+  /* px means "pixels". The base font size is now 10 pixels high */
+  font-size: 10px;
+  /* Replace PLACEHOLDER with the font-family property value you got from Google Fonts */
+  font-family: "Playfair Display", sans-serif;
+  background-color: #00539f;
+}
+
+h1 {
+    font-size: 60px;
+    text-align: center;
+}
+
+p,
+li {
+    font-size: 16px;
+    line-height: 2;
+    letter-spacing: 1px;
+}
+
+body {
+    /* forces the body to always be 600 px wide */
+    width: 600px;
+    /* When you set two values on a property like margin or padding, the first value affects the 
+    element's top and bottom side; the second value affects the left and right side. auto is a 
+    special value that divides the available horizontal space evenly between left and right. */
+    margin: 0 auto;
+    background-color: #ff9500;
+    /* This sets four values for padding. No padding on the top of the body, 20 pixels on the 
+    right, bottom and left in that order*/
+    padding: 0 20px 20px 20px;
+    /* This sets the values for the width, style, and color of the border.*/
+    border: 5px solid black;
+}
+
+h1 {
+    margin: 0;
+    padding: 20px 0;
+    color: #00539f;
+    /* horizontal offset, vertical offset, blur radius, color */
+    text-shadow: 3px 3px 1px black;
+}
+
+/* center the image */
+img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+}
