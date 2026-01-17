@@ -5,11 +5,17 @@ const Button = ({ onClick, text }) => {
 };
 
 const Ratings = ({ good, neutral, bad }) => {
+  const total = good + neutral + bad;
+  const average = (good - bad) / total;
+  const positivePercent = good / total * 100 
   return (
     <div>
       <p>good {good}</p>
       <p>neutral {neutral}</p>
       <p>bad {bad}</p>
+      <p>all {good + neutral + bad}</p>
+      <p>average {average}</p>
+      <p>positive {positivePercent} %</p>
     </div>
   )
 }
