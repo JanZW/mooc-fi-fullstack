@@ -10,6 +10,45 @@ const Anecdote = ({ anecdote, votes }) => {
   );
 };
 
+const AnecdoteOfTheDay = ({ votes, setVotes, anecdotes }) => {
+  const [selected, setSelected] = useState(0);
+  const maxIndex = anecdotes.length - 1;
+
+  const handleNextAnecdote = () => {
+    const randomInt = Math.floor(Math.random() * maxIndex);
+    setSelected(randomInt);
+  };
+
+  const handleVote = () => {
+    const newVotes = [...votes];
+    newVotes[selected]++;
+    setVotes(newVotes);
+  };
+
+  return (
+    <div>
+      <h1>Anecdote of the day</h1>
+      <Anecdote anecdote={anecdotes[selected]} votes={votes[selected]} />
+      <button onClick={handleNextAnecdote}>next anecdore</button>
+      <button onClick={handleVote}>vote</button>
+    </div>
+  );
+};
+
+const AnecdoteWithMostVotes = ({ votes, anecdotes }) => {
+  const highestVoteCount = Math.max(...votes);
+  const highestVotedIndex = votes.indexOf(highestVoteCount);
+  return (
+    <div>
+      <h1>Anecdote with most votes</h1>
+      <Anecdote
+        anecdote={anecdotes[highestVotedIndex]}
+        votes={votes[highestVotedIndex]}
+      />
+    </div>
+  );
+};
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often.",
@@ -22,32 +61,18 @@ const App = () => {
     "The only way to go fast, is to go well.",
   ];
 
-  const [selected, setSelected] = useState(0);
   let initialVotes = new Array(anecdotes.length).fill(0);
 
   const [votes, setVotes] = useState(initialVotes);
-  const maxIndex = anecdotes.length - 1;
-
-  const handleNextAnecdote = () => {
-    const randomInt = Math.floor(Math.random() * maxIndex);
-    console.log("set selected to ", randomInt);
-    setSelected(randomInt);
-  };
-
-  const handleVote = () => {
-    const newVotes = [...votes];
-    newVotes[selected]++;
-    setVotes(newVotes);
-  };
-
-  console.log(votes);
-  console.log(selected);
 
   return (
     <div>
-      <Anecdote anecdote={anecdotes[selected]} votes={votes[selected]} />
-      <button onClick={handleNextAnecdote}>next anecdore</button>
-      <button onClick={handleVote}>vote</button>
+      <AnecdoteOfTheDay
+        votes={votes}
+        setVotes={setVotes}
+        anecdotes={anecdotes}
+      />
+      <AnecdoteWithMostVotes votes={votes} anecdotes={anecdotes} />
     </div>
   );
 };
