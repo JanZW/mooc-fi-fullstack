@@ -16,12 +16,24 @@ const App = () => {
 
   const [newName, setNewName] = useState('')
 
+  const checkForDuplicate = () => {
+    const isIncluded = persons.reduce(
+      (isIncludedAcc, currentPerson) => isIncludedAcc || currentPerson.name === newName,
+      false
+    )
+    return isIncluded
+  }
+
   const handleInputChange = (event) => {
     setNewName(event.target.value)
   }
 
   const handleClickSubmit = (event) => {
     event.preventDefault()
+    if (checkForDuplicate()) {
+      alert(`${newName} is already in Phonebook!`)
+      return
+    }
     setPersons(persons.concat({name:newName}))
     setNewName('')
   }
