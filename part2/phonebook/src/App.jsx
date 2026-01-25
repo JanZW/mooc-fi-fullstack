@@ -22,13 +22,8 @@ const App = () => {
     setFiltervalue(event.target.value);
   };
 
-  const checkForDuplicate = () => {
-    const isIncluded = persons.reduce(
-      (isIncludedAcc, currentPerson) =>
-        isIncludedAcc || currentPerson.name === newName,
-      false,
-    );
-    return isIncluded;
+  const findDuplicate = () => {
+    return persons.find((currentPerson) => currentPerson.name === newName);
   };
 
   const handleNameInputChange = (event) => {
@@ -36,29 +31,39 @@ const App = () => {
   };
 
   const handleNumberInputChange = (event) => {
-    console.log("Number changed to ", event.target.value);
     setNewNumber(event.target.value);
   };
 
   const handleClickSubmit = (event) => {
     event.preventDefault();
-    if (checkForDuplicate()) {
-      alert(`${newName} is already in Phonebook!`);
-      return;
-    }
-
-    phonebook
-      .create({
-        name: newName,
-        number: newNumber,
-      })
-      .then((data) => {
+    const existingEntry = findDuplicate();
+    const newEntry = {
+      name: newName,
+      number: newNumber,
+    };
+    if (existingEntry == null) {
+      phonebook.create(newEntry).then((data) => {
         setPersons(persons.concat(data));
       });
+    } else {
+      if (
+        window.confirm(
+          `${newName} is already in phonebook, replace the old number with a new one?`,
+        )
+      ) {
+        console.log("update old entry");
+        phonebook.update(existingEntry.id, newEntry);
+        setPersons([
+          ...persons.filter((p) => p.id !== existingEntry.id),
+          { id: existingEntry.id, ...newEntry },
+        ]);
+      } else {
+        console.log("do not replace old value");
+      }
+    }
 
     setNewName("");
     setNewNumber("");
-    console.log("new number restet");
   };
 
   const handleDelete = (event, person) => {
