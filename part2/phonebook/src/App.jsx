@@ -99,10 +99,13 @@ const App = () => {
       alert(`${newName} is already in Phonebook!`);
       return;
     }
-    const currentIndex = Math.max(...persons.map((person) => person.id)) + 1;
-    setPersons(
-      persons.concat({ id: currentIndex, name: newName, number: newNumber }),
-    );
+    
+    axios.post('http://localhost:3001/persons', {name: newName, number: newNumber })
+    .then(response => {
+      console.log('posted new entry');
+      setPersons(persons.concat(response.data));
+    })
+
     setNewName("");
     setNewNumber("");
     console.log("new number restet");
