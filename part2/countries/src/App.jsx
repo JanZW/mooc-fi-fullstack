@@ -1,10 +1,50 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import weather from "./services/weather";
+
+const Weather = ({ city }) => {
+  const [weatherAtCapitol, setWeatherAtCapitol] = useState(null);
+
+  if (city === null) {
+    return null;
+  }
+
+  useEffect(() => {
+    weather
+      .getWeather({ city })
+      .then((response) => {
+        console.log(response.data);
+        setWeatherAtCapitol(response.data);
+      })
+      .catch((e) => console.log(`Error while catching weather: ${e}`));
+  }, [city]);
+
+  if (weatherAtCapitol === null) {
+    return null;
+  }
+
+  console.log(weatherAtCapitol)
+  return (
+    <>
+      <h2>Weather in {city}</h2>
+      <p>
+        Temperature: {Math.round((weatherAtCapitol.main.temp - 273.15) * 10) / 10} °C
+        (feels like {Math.round((weatherAtCapitol.main.feels_like - 273.15) * 10) / 10} °C)
+      </p>
+      <img
+        src={`https://openweathermap.org/payload/api/media/file/${weatherAtCapitol.weather[0].icon}.png`}
+        alt={weatherAtCapitol.weather.description}
+      />
+      <p>Wind: {weatherAtCapitol.wind.speed} m/s</p>
+    </>
+  );
+};
 
 const CountryDetails = ({ country }) => {
   if (country == null) {
     return null;
   }
+
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -20,6 +60,8 @@ const CountryDetails = ({ country }) => {
         ))}
       </ul>
       <img src={country.flags.png} alt={country.flags.alt} />
+      <br />
+      <Weather city={country.capital} />
     </div>
   );
 };
@@ -32,10 +74,7 @@ const Countries = ({ countries, filterString, setSelectedCountry }) => {
     country.name.common.toLowerCase().includes(filterString.toLowerCase()),
   );
 
-  console.log(filteredCountries);
-
   if (filteredCountries.length > 10) {
-    setSelectedCountry(null);
     return (
       <p>
         Too many matches ({filteredCountries.length}), specify another filter
@@ -43,12 +82,20 @@ const Countries = ({ countries, filterString, setSelectedCountry }) => {
     );
   }
 
+  useEffect(() => {
+    if (filteredCountries.length === 0) {
+      setSelectedCountry(null);
+    }
+    if (filteredCountries.length === 1) {
+      setSelectedCountry(filteredCountries[0]);
+    }
+  }, [filteredCountries]);
+
   if (filteredCountries.length === 0) {
     return "No Matches";
   }
 
   if (filteredCountries.length === 1) {
-    setSelectedCountry(filteredCountries[0]);
     return null;
   }
 
@@ -77,6 +124,7 @@ const App = () => {
   const [countries, setCountries] = useState(null);
   const [searchString, setSearchString] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [weatherIconURL, setWeatherIconUrl] = useState(null);
 
   const handleSearchString = (event) => {
     setSearchString(event.target.value);
@@ -92,8 +140,6 @@ const App = () => {
       .catch((error) => console.log(error));
   }, []);
 
-  console.log(selectedCountry);
-
   return (
     <>
       <h1>Countries</h1>
@@ -105,7 +151,11 @@ const App = () => {
         filterString={searchString}
         setSelectedCountry={setSelectedCountry}
       />
-      <CountryDetails country={selectedCountry} />
+      <CountryDetails
+        country={selectedCountry}
+        weatherIconURL={weatherIconURL}
+        setWeatherIconUrl={setWeatherIconUrl}
+      />
     </>
   );
 };
