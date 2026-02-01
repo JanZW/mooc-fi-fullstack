@@ -30,17 +30,24 @@ app.get("/api/persons", (request, response) => {
 });
 
 app.get("/api/persons/:id", (request, response) => {
-  const personId = request.params.id
-  
-  const person = persons.find(p => p.id === personId)
+  const personId = request.params.id;
+
+  const person = persons.find((p) => p.id === personId);
 
   if (!person) {
-    response.status(404)
+    response.status(404);
   }
 
-  response.json(person)
+  response.json(person);
+});
 
-})
+app.delete("/api/persons/:id", (request, response) => {
+  const personId = request.params.id;
+
+  persons = persons.filter((p) => p.id !== personId);
+
+  response.status(204);
+});
 
 app.get("/info", (request, response) => {
   const date = new Date();
