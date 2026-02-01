@@ -1,6 +1,7 @@
 const express = require("express");
 
 const app = express();
+app.use(express.json());
 
 let persons = [
   {
@@ -26,11 +27,13 @@ let persons = [
 ];
 
 app.get("/api/persons", (request, response) => {
+  console.log("Get all persons");
   response.json(persons);
 });
 
 app.get("/api/persons/:id", (request, response) => {
   const personId = request.params.id;
+  console.log("get person with id", personId);
 
   const person = persons.find((p) => p.id === personId);
 
@@ -44,9 +47,38 @@ app.get("/api/persons/:id", (request, response) => {
 app.delete("/api/persons/:id", (request, response) => {
   const personId = request.params.id;
 
+  console.log("deleting person with id", personId);
+
   persons = persons.filter((p) => p.id !== personId);
 
   response.status(204);
+});
+
+app.post("/api/persons", (request, response) => {
+  console.log("adding person");
+
+  const getNewId = () => {
+    return String(Math.ceil(Math.random() * 1000));
+  };
+
+  const newPerson = request.body;
+
+  if (!newPerson) {
+    return response.status(400).send("No body provided");
+  }
+
+  if (!newPerson.name || !newPerson.number) {
+    return response.status(400).send("Malformed body");
+  }
+
+  if (persons.find((p) => p.name === newPerson.name)) {
+    return response.status(400).send("Person already exists");
+  }
+
+  newPerson.id = getNewId();
+
+  persons = persons.concat(newPerson);
+  response.json(newPerson);
 });
 
 app.get("/info", (request, response) => {
