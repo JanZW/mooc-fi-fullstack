@@ -1,0 +1,17 @@
+{
+  "name": "phonebook",
+  "version": "0.1.0",
+  "description": "Backend for Phonebook",
+  "license": "MIT",
+  "author": "JanZW",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'No tests' && exit 1",
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
