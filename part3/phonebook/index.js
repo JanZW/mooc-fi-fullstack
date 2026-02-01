@@ -29,6 +29,19 @@ app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
 
+app.get("/api/persons/:id", (request, response) => {
+  const personId = request.params.id
+  
+  const person = persons.find(p => p.id === personId)
+
+  if (!person) {
+    response.status(404)
+  }
+
+  response.json(person)
+
+})
+
 app.get("/info", (request, response) => {
   const date = new Date();
   console.log(date.toString());
