@@ -1,7 +1,9 @@
 const express = require("express");
+const morgan = require("morgan");
 
 const app = express();
 app.use(express.json());
+app.use(morgan('tiny'))
 
 let persons = [
   {
@@ -27,13 +29,11 @@ let persons = [
 ];
 
 app.get("/api/persons", (request, response) => {
-  console.log("Get all persons");
   response.json(persons);
 });
 
 app.get("/api/persons/:id", (request, response) => {
   const personId = request.params.id;
-  console.log("get person with id", personId);
 
   const person = persons.find((p) => p.id === personId);
 
@@ -47,16 +47,12 @@ app.get("/api/persons/:id", (request, response) => {
 app.delete("/api/persons/:id", (request, response) => {
   const personId = request.params.id;
 
-  console.log("deleting person with id", personId);
-
   persons = persons.filter((p) => p.id !== personId);
 
   response.status(204);
 });
 
 app.post("/api/persons", (request, response) => {
-  console.log("adding person");
-
   const getNewId = () => {
     return String(Math.ceil(Math.random() * 1000));
   };
@@ -83,7 +79,6 @@ app.post("/api/persons", (request, response) => {
 
 app.get("/info", (request, response) => {
   const date = new Date();
-  console.log(date.toString());
   response.send(
     `<p>Phonebook has info for ${persons.length} people</p>` +
       `<p>${date.toString()}</p>`,
