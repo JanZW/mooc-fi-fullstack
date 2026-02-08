@@ -62,10 +62,6 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 app.post("/api/persons", (request, response) => {
-  const getNewId = () => {
-    return String(Math.ceil(Math.random() * 1000));
-  };
-
   const newPerson = request.body;
 
   if (!newPerson) {
@@ -75,15 +71,12 @@ app.post("/api/persons", (request, response) => {
   if (!newPerson.name || !newPerson.number) {
     return response.status(400).send("Malformed body");
   }
+  
+  const person = new Person({
+    name: newPerson.name, number: newPerson.number
+  })
 
-  if (persons.find((p) => p.name === newPerson.name)) {
-    return response.status(400).send("Person already exists");
-  }
-
-  newPerson.id = getNewId();
-
-  persons = persons.concat(newPerson);
-  response.json(newPerson);
+  person.save().then(savedPerson => response.json(savedPerson))
 });
 
 app.get("/info", (request, response) => {
