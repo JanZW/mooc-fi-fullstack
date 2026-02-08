@@ -24,4 +24,7 @@ services:
     ports:
       - 127.0.0.1:3001:3001
     environment:
-      MONGO_DB_PASSWORD: ${MONGO_DB_PASSWORD}
+      MONGODB_URI: "mongodb://user:${MONGO_DB_PASSWORD}@mongodb:27017/people?authSource=admin"
+    depends_on:
+      mongodb:
+        condition: service_started

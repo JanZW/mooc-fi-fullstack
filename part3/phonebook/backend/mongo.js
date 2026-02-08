@@ -1,5 +1,6 @@
+require('dotenv').config({path: '../.env'})
+const Person = require('./models/person')
 const mongoose = require('mongoose');
-
 
 const listAll = () => {
     console.log('phonebook:')
@@ -24,25 +25,6 @@ const insertPerson = (person) => {
 };
 
 const argn = process.argv.length;
-
-if (argn < 3){
-    console.log('Provide password as argument')
-    process.exit(1)
-} 
-
-const password = process.argv[2]
-
-const url = `mongodb://user:${password}@127.0.0.1:27017/people?authSource=admin`
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-})
-
-const Person = mongoose.model('Person', personSchema)
-
 
 if (argn === 3) {
     listAll();

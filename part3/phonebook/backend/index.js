@@ -1,9 +1,12 @@
+require("dotenv").config({ path: "../.env" });
+const Person = require("./models/person");
+
 const express = require("express");
 const morgan = require("morgan");
 
 const app = express();
 app.use(express.json());
-app.use(express.static('dist'))
+app.use(express.static("dist"));
 
 morgan.token("body", (request, response) => {
   return JSON.stringify(request.body);
@@ -37,19 +40,17 @@ let persons = [
 ];
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((people) => response.json(people));
 });
 
 app.get("/api/persons/:id", (request, response) => {
-  const personId = request.params.id;
-
-  const person = persons.find((p) => p.id === personId);
-
-  if (!person) {
-    response.status(404);
-  }
-
-  response.json(person);
+  Person.findById(request.params.id).then((person) => {
+    if (!person) {
+      response.status(404);
+    } else {
+      response.json(person);
+    }
+  });
 });
 
 app.delete("/api/persons/:id", (request, response) => {
