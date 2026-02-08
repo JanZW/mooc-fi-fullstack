@@ -109,10 +109,13 @@ app.put("/api/persons/:id", (request, response, next) => {
 
 app.get("/info", (request, response) => {
   const date = new Date();
-  response.send(
-    `<p>Phonebook has info for ${persons.length} people</p>` +
+  return Person.find({}).then(persons => {
+    const numberOfPersons = persons.length
+    response.send(
+      `<p>Phonebook has info for ${numberOfPersons} people</p>` +
       `<p>${date.toString()}</p>`,
-  );
+    );
+  })
 });
 
 const errorHandler = (error, request, response, next) => {
