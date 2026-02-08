@@ -14,10 +14,22 @@ const App = () => {
 
   const [filterValue, setFiltervalue] = useState("");
 
-  const [notification, setNotification] = useState({message: null, kind: null});
+  const [notification, setNotification] = useState({
+    message: null,
+    kind: null,
+  });
 
   useEffect(() => {
-    phonebook.getAll().then((data) => setPersons(data));
+    phonebook
+      .getAll()
+      .then((data) => setPersons(data))
+      .catch((error) => {
+        console.log(error.response.data.error);
+        setNotification({ message: error.response.data.error, kind: "error" });
+        setTimeout(() => {
+          setNotification({ message: null, kind: null });
+        }, 5000);
+      });
   }, []);
 
   const handleFilterChange = (event) => {
@@ -50,15 +62,19 @@ const App = () => {
           setPersons(persons.concat(data));
         })
         .then(() => {
-          setNotification({message: "Added User to DB", kind: "success"});
+          setNotification({ message: "Added User to DB", kind: "success" });
           setTimeout(() => {
-            setNotification({message: null, kind: null});
+            setNotification({ message: null, kind: null });
           }, 5000);
         })
         .catch((error) => {
-          setNotification({message: "could not add user", kind: 'error'});
+          console.log(`error: ${error.response}`)
+          setNotification({
+            message: `could not add user: ${error.response.data.error}`,
+            kind: "error",
+          });
           setTimeout(() => {
-            setNotification({message: null, kind: null});
+            setNotification({ message: null, kind: null });
           }, 5000);
         });
     } else {
@@ -71,26 +87,35 @@ const App = () => {
         phonebook
           .update(existingEntry.id, newEntry)
           .then(() => {
-            setNotification({message: `Updated phone number for ${newEntry.name}`, kind: 'success'});
+            setNotification({
+              message: `Updated phone number for ${newEntry.name}`,
+              kind: "success",
+            });
             setTimeout(() => {
-              setNotification({message: null, kind: null});
+              setNotification({ message: null, kind: null });
             }, 5000);
             setPersons([
               ...persons.filter((p) => p.id !== existingEntry.id),
               { id: existingEntry.id, ...newEntry },
             ]);
           })
-          .catch(() => {
-            setNotification({message: `Entry for ${newName} has already been deleted`, kind: 'error'});
+          .catch(error => {
+            setNotification({
+              message: `Could not update ${newName}: ${error.response.data.error}`,
+              kind: "error",
+            });
             setTimeout(() => {
-              setNotification({message: null, kind: null});
+              setNotification({ message: null, kind: null });
             }, 5000);
-            setPersons([...persons.filter((p) => p.id !== existingEntry.id)])
+            setPersons([...persons.filter((p) => p.id !== existingEntry.id)]);
           });
       } else {
-        setNotification({message: "Did not store entry in DB", kind: 'error'});
+        setNotification({
+          message: "Did not store entry in DB",
+          kind: "error",
+        });
         setTimeout(() => {
-          setNotification({message: null, kind: null});
+          setNotification({ message: null, kind: null });
         }, 5000);
         console.log("do not replace old value");
       }
@@ -105,12 +130,21 @@ const App = () => {
       phonebook
         .remove(person.id)
         .then(() => {
-          setNotification({message: `Successfully deleted ${person.name}`, kind: 'success'});
-          setTimeout(() => setSuccessMessage(null), 5000);
-        })
-        .catch(() => {
-          setNotification({message: "Somthing went wrong while deleting entry", kind: 'error'});
+          setNotification({
+            message: `Successfully deleted ${person.name}`,
+            kind: "success",
+          });
           setTimeout(() => setNotification({message: null, kind: null}), 5000);
+        })
+        .catch(error => {
+          setNotification({
+            message: `Somthing went wrong while deleting entry: ${error.response.data.error}`,
+            kind: "error",
+          });
+          setTimeout(
+            () => setNotification({ message: null, kind: null }),
+            5000,
+          );
         });
       console.log(`removed entry ${person.id}`);
       setPersons(persons.filter((p) => p.id !== person.id));
@@ -122,7 +156,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification.message} className={notification.kind} />
+      <Notification
+        message={notification.message}
+        className={notification.kind}
+      />
       <Filter filterValue={filterValue} onChange={handleFilterChange} />
       <h3>New Entry</h3>
       <PersonForm
