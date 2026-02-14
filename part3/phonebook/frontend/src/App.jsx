@@ -107,7 +107,7 @@ const App = () => {
             setTimeout(() => {
               setNotification({ message: null, kind: null });
             }, 5000);
-            setPersons([...persons.filter((p) => p.id !== existingEntry.id)]);
+            /*setPersons([...persons.filter((p) => p.id !== existingEntry.id)]);*/
           });
       } else {
         setNotification({
