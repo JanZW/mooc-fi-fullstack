@@ -1,16 +1,16 @@
-const mongoose = require("mongoose");
-mongoose.set("strictQuery", false);
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
 
-const url = process.env.MONGODB_URI;
+const url = process.env.MONGODB_URI
 
-console.log("calling connect");
+console.log('calling connect')
 mongoose
   .connect(url)
-  .then(() => console.log("established connection to MongoDB"))
+  .then(() => console.log('established connection to MongoDB'))
   .catch((e) =>
     console.log(`connection to MongoDB could not be established: ${e}`),
-  );
-console.log("connect returned");
+  )
+console.log('connect returned')
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -31,14 +31,14 @@ const personSchema = new mongoose.Schema({
       message: props => `${props.value} is not a valid phone number!`
     },
   },
-});
+})
 
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
   },
-});
+})
 
-module.exports = mongoose.model("Person", personSchema);
+module.exports = mongoose.model('Person', personSchema)
